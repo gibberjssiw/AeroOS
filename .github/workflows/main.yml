@@ -1,0 +1,29 @@
+name: Build AeroOS ISO
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-iso:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Build Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y live-build debootstrap squashfs-tools xorriso grub-pc-bin grub-efi-amd64-bin
+
+      - name: Make scripts executable
+        run: chmod +x *.sh
+
+      - name: Execute AeroOS Master Build Script
+        run: sudo ./aeroos-build-all.sh
+
+      - name: Upload AeroOS ISO as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AeroOS-1.0-amd64-ISO
+          path: aeroos-build/*.iso
+          
